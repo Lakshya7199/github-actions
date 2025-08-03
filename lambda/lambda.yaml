@@ -7,7 +7,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: HelloLakshyaFunction
-      Handler: lambda.lambda_handler
+      Handler: lambda1.lambda_handler
       Runtime: python3.11
       CodeUri: ./  # Will be updated to s3://<bucket>/lambda/ by root.yaml
       Role: arn:aws:iam::884576820385:role/lambda-admin  # Replace or inject dynamically
