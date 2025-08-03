@@ -3,7 +3,7 @@ name: Full SAM-Based CloudFormation Pipeline
 on:
   push:
     branches:
-      - main
+      - master
 
 env:
   ASSET_BUCKET_NAME: cf-asset-bucket-us-east-1-sandbox
