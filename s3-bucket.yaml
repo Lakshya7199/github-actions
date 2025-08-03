@@ -1,0 +1,9 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: S3 Bucket created using CloudFormation
+
+Resources:
+  MyS3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub "my-unique-bucket-${AWS::AccountId}-${AWS::Region}"
+      AccessControl: Private
