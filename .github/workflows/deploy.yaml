@@ -32,10 +32,11 @@ jobs:
             --stack-name cf-asset-bucket-stack \
             --parameter-overrides AssetBucketName=${{ env.ASSET_BUCKET_NAME }}
 
-  build:
-    name: Lint & Upload to S3
-    needs: init-bucket
+
+  deploy:
     runs-on: ubuntu-latest
+    env:
+      ASSET_BUCKET_NAME: cf-asset-bucket-us-east-1-sandbox
 
     steps:
       - name: Checkout source
@@ -46,59 +47,48 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: 'us-east-1'
+          aws-region: 'us-east-1'        
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: 3.11
 
-      - name: Install cfn-lint
-        run: pip install cfn-lint
+      - name: Install dependencies
+        run: |
+          pip install aws-sam-cli cfn-lint
 
-      - name: Lint CloudFormation Templates
+      - name: Run CFN Lint
         run: |
           cfn-lint root.yaml
           cfn-lint s3.yaml
           cfn-lint lambda/lambda.yaml
 
-      - name: Upload all project files to S3
+      - name: Run SAM Build
         run: |
-          aws s3 cp . s3://${{ env.ASSET_BUCKET_NAME }}/ --recursive \
-          --exclude "*" \
-          --include "root.yaml" \
-          --include "s3.yaml" \
-          --include "lambda/*"
+          sam build --template lambda/lambda.yaml --build-dir .aws-sam
 
+      - name: Package Lambda with SAM
+        run: |
+          sam package \
+            --s3-bucket $ASSET_BUCKET_NAME \
+            --template-file .aws-sam/template.yaml \
+            --output-template-file lambda/lambda.yaml
 
-  deploy:
-    name: Deploy Root Stack
-    needs: build
-    runs-on: ubuntu-latest
+      - name: Upload Templates to S3
+        run: |
+          aws s3 cp root.yaml s3://$ASSET_BUCKET_NAME/root.yaml
+          aws s3 cp s3.yaml s3://$ASSET_BUCKET_NAME/s3.yaml
+          aws s3 cp lambda/lambda.yaml s3://$ASSET_BUCKET_NAME/lambda/lambda.yaml
 
-    steps:
-
-      - name: Checkout source
-        uses: actions/checkout@v4
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: 'us-east-1'
-
-      - name: Deploy root stack
+      - name: Deploy Root Stack
         run: |
           aws cloudformation deploy \
             --template-file root.yaml \
             --stack-name root-nested-stack \
             --capabilities CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND \
             --parameter-overrides AssetBucket=${{ env.ASSET_BUCKET_NAME }}
-      
-      - name: Debug CloudFormation failure
-        if: failure()
+
+      - name: Describe Stack Resources (Optional Debug)
         run: |
-          aws cloudformation describe-stack-events \
-            --stack-name root-nested-stack \
-            --max-items 10
+          aws cloudformation describe-stack-resources --stack-name root-nested-stack
