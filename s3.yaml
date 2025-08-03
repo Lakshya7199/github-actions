@@ -6,4 +6,3 @@ Resources:
     Type: AWS::S3::Bucket
     Properties:
       BucketName: !Sub "my-unique-bucket-${AWS::AccountId}-${AWS::Region}"
-      AccessControl: Private
