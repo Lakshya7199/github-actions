@@ -56,7 +56,11 @@ jobs:
 
       - name: Upload all project files to S3
         run: |
-          aws s3 cp . s3://${{ env.ASSET_BUCKET_NAME }}/ --recursive
+          aws s3 cp . s3://${{ env.ASSET_BUCKET_NAME }}/ --recursive \
+          --exclude "*" \
+          --include "root.yaml" \
+          --include "s3.yaml" \
+          --include "lambda/*"
 
   deploy:
     name: Deploy Root Stack
