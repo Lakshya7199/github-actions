@@ -93,7 +93,7 @@ jobs:
           aws cloudformation deploy \
             --template-file root.yaml \
             --stack-name root-nested-stack \
-            --capabilities CAPABILITY_NAMED_IAM \
+            --capabilities CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND \
             --parameter-overrides AssetBucket=${{ env.ASSET_BUCKET_NAME }}
       
       - name: Debug CloudFormation failure
