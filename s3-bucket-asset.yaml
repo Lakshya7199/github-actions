@@ -1,0 +1,13 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Creates S3 bucket to hold templates and Lambda code
+
+Parameters:
+  AssetBucketName:
+    Type: String
+
+Resources:
+  CFAssetBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Ref AssetBucketName
+      AccessControl: Private

@@ -1,0 +1,13 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Lambda Function using SAM
+
+Resources:
+  HelloLakshyaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: HelloLakshyaFunction
+      Handler: lambda.lambda_handler
+      Runtime: python3.11
+      CodeUri: ./  # Will be updated to s3://<bucket>/lambda/ by root.yaml
+      Role: arn:aws:iam::884576820385:role/lambda-admin  # Replace or inject dynamically

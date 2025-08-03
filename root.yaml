@@ -1,0 +1,17 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Root Stack for S3 and Lambda Nested Stacks
+
+Parameters:
+  AssetBucket:
+    Type: String
+
+Resources:
+  S3NestedStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub "https://s3.amazonaws.com/${AssetBucket}/s3.yaml"
+
+  LambdaNestedStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub "https://s3.amazonaws.com/${AssetBucket}/lambda/lambda.yaml"
