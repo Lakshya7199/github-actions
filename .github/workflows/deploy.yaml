@@ -9,9 +9,9 @@ env:
   ASSET_BUCKET_NAME: cf-asset-bucket-us-east-1-sandbox
 
 jobs:
-  init-bucket:
-    name: Create Artifact S3 Bucket
-    runs-on: ubuntu-latest
+  # init-bucket:
+  #   name: Create Artifact S3 Bucket
+  #   runs-on: ubuntu-latest
 
   #   steps:
   #     - name: Checkout source
