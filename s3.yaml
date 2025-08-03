@@ -5,4 +5,4 @@ Resources:
   MyS3Bucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Sub "my-unique-bucket-${AWS::AccountId}-${AWS::Region}"
+      BucketName: !Sub "my-uniques-bucket-${AWS::AccountId}-${AWS::Region}"
