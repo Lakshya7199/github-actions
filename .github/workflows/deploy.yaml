@@ -95,3 +95,10 @@ jobs:
             --stack-name root-nested-stack \
             --capabilities CAPABILITY_NAMED_IAM \
             --parameter-overrides AssetBucket=${{ env.ASSET_BUCKET_NAME }}
+      
+      - name: Debug CloudFormation failure
+        if: failure()
+        run: |
+          aws cloudformation describe-stack-events \
+            --stack-name root-nested-stack \
+            --max-items 10
